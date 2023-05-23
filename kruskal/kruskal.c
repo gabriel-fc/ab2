@@ -7,6 +7,24 @@
 FILE *file; 
 int vertices, edges;
 
+void freeEdgesList(edge **edgesList){
+    int i;
+    for ( i = 0; i < edges; i++){
+        free(edgesList[i]);
+    }
+    free(edgesList);
+}
+
+void freeVerticesList(vertex **verticesList){
+    int i;
+    for ( i = 0; i < vertices; i++){
+        free(verticesList[i]);
+    }
+    free(verticesList);
+}
+
+
+
 edge **readEdges(){
     edge **edgesList = (edge**) malloc(edges * sizeof(edge));
     int i, u, v, weight;
@@ -71,6 +89,7 @@ edge **kruskal(edge **edgesList){
         }
     }
 
+    freeVerticesList(verticesList);
     return mst;
 }
 
@@ -103,7 +122,12 @@ void main(int argc, char *argv[]){
         strcat(mstRep, aux);
         count += mst[i]->weight;
     }
+
     if(!strcmp(execCommand, "-s")) printf("%s\n", mstRep);
     else if(!strcmp(execCommand, "-h")){}
     else printf("%d\n", count);
+
+    freeEdgesList(edgesList);
+    free(mst);
+    free(mstRep);
 }
