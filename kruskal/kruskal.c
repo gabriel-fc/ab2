@@ -39,7 +39,6 @@ void _union(int u, int v, vertex **verticesList){
         verticesList[v]->parent = u;
         if(verticesList[u]->rank == verticesList[v]->rank) verticesList[u]->rank++;
     }
-    
     else verticesList[u]->parent = v;
 }
 
@@ -64,8 +63,8 @@ void kruskal(edge **edgesList){
         int v = edgesList[i]->v;
         if(_find(u, verticesList) != _find(v, verticesList)){
             // mst[mstSize++] = edgesList[i];
-            printf("(%d,%d)\n", u, v);
             _union(u, v, verticesList);
+            printf("(%d,%d, %d-%d)\n", u, v, verticesList[u]->parent, verticesList[v]->parent);
         }
     }
 
