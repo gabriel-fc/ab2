@@ -22,7 +22,7 @@ edge **readEdges(){
     return edgesList;
 }
 
-vertex **setVerticesList(){
+vertex **_makeSet(){
     vertex **verticesList = (vertex**) malloc((vertices + 1) * sizeof(vertex));
     int i;
     for (i = 1; i <= vertices; i++){
@@ -34,7 +34,43 @@ vertex **setVerticesList(){
 }
 
 
+void _union(int u, int v, vertex **verticesList){
+    if(verticesList[u]->rank >= verticesList[v]->rank){
+        verticesList[v]->parent = u;
+        if(verticesList[u]->rank == verticesList[v]->rank) verticesList[u]->rank++;
+    }
+    
+    else verticesList[u]->parent = v;
+}
 
+int _find(int u, vertex **verticesList){
+    int parent = verticesList[u]->parent;
+    if(parent != u) verticesList[u]->parent = _find(parent, verticesList);
+
+    return verticesList[u]->parent;
+
+}
+
+
+
+
+void kruskal(edge **edgesList){
+    edge **mst = (edge **) malloc((vertices) * sizeof(edge));
+    int mstSize = 0, i;
+    vertex **verticesList = _makeSet();
+
+    for (i = 0; i < edges; i++){
+        int u = edgesList[i]->u;
+        int v = edgesList[i]->v;
+        if(_find(u, verticesList) != _find(v, verticesList)){
+            // mst[mstSize++] = edgesList[i];
+            printf("(%d,%d)\n", u, v);
+            _union(u, v, verticesList);
+        }
+    }
+
+    printf("end\n");
+}
 
 void main(int argc, char *argv[]){
     int i, root;
@@ -51,8 +87,14 @@ void main(int argc, char *argv[]){
         return;
     }
     fscanf(file, "%d%d", &vertices, &edges);
+
     edge **edgesList = readEdges();
     sort(edgesList, 0, edges);
-
+    for (i = 0; i < edges; i++){
+        printf("%d %d %d\n", edgesList[i]->u, edgesList[i]->v, edgesList[i]->weight);
+    }
     
+    kruskal(edgesList);
+    printf("end");
+
 }

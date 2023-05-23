@@ -11,9 +11,13 @@ void swap(edge **edgesList, int a, int b) {
 }
 
 int partition(edge **edgesList, int beginning, int length) {
+    
+
     int pivotIndex = beginning + length -1;
     edge *pivot = edgesList[pivotIndex];
     int i = beginning - 1;
+
+    int l;
 
     for (int j = beginning; j <= pivotIndex; j++) {
         if (edgesList[j]->weight <= pivot->weight) {
@@ -28,6 +32,6 @@ void sort(edge **edgesList, int beginning, int length) {
     if (length > 1) {
         int pivot = partition(edgesList, beginning, length); 
         sort(edgesList, beginning, pivot-beginning);
-        sort(edgesList, pivot + 1, length - pivot - 1);
+        sort(edgesList, pivot + 1, length + beginning - pivot -1);
     }
 }
