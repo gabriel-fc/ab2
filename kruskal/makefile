@@ -1,7 +1,7 @@
 CC=gcc
 #CFLAGS=-Wall -Werror
 
-SRC=kruskal.c quickSort.c
+SRC=kruskal.c quickSort.c ../common/inputHandler.c
 OBJ=$(SRC:.c=.o)
 TARGET=kruskal.bin
 

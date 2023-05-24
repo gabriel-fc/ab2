@@ -3,9 +3,10 @@
 #include <string.h>
 
 #include "quickSort.h"
+#include "../common/inputHandler.h"
 
-FILE *file; 
-int vertices, edges;
+FILE *inputFile; 
+int vertices, edges, mstSize = 0;
 
 void freeEdgesList(edge **edgesList){
     int i;
@@ -30,7 +31,7 @@ edge **readEdges(){
     int i, u, v, weight;
     
     for (i = 0; i < edges; i++){
-        fscanf(file, "%d%d%d", &u, &v, &weight);
+        fscanf(inputFile, "%d%d%d", &u, &v, &weight);
 
         edgesList[i] = (edge*) malloc(sizeof(edge*));
         edgesList[i]->u = u;
@@ -75,17 +76,15 @@ int _find(int u, vertex **verticesList){
 
 edge **kruskal(edge **edgesList){
     edge **mst = (edge **) malloc((vertices-1) * sizeof(edge*));
-    int mstSize = 0, i;
+    int i;
     vertex **verticesList = _makeSet();
 
     for (i = 0; i < edges; i++){
         int u = edgesList[i]->u;
         int v = edgesList[i]->v;
         if(_find(u, verticesList) != _find(v, verticesList)){
-            // printf("%d\n", mstSize);
             mst[mstSize++] = edgesList[i];
             _union(u, v, verticesList);
-            // printf("(%d,%d, %d-%d)\n", u, v, verticesList[u]->parent, verticesList[v]->parent);
         }
     }
 
@@ -93,41 +92,71 @@ edge **kruskal(edge **edgesList){
     return mst;
 }
 
+
+char *getMSTRep(edge **mst, int vertices){
+    int i;
+    char *output = (char*) calloc(vertices*10, sizeof(char));
+    char aux[12];
+    for (i = 1; i < mstSize; i++){
+        sprintf(aux,"(%d,%d) ", mst[i]->u, mst[i]->v);
+        strcat(output, aux);
+    }
+    return output;
+}
+
+char *getMSTCost(edge **mst, int vertices){
+    int i, count = 0;
+    char *output = (char*) calloc(11, sizeof(char));
+    for (i = 0; i < mstSize; i++){
+        count += mst[i]->weight; 
+    }
+    sprintf(output, "%d", count);
+    return output ;
+}
+
+
+
+
+void printHelp(){
+     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        printf("menu de ajuda do algoritmo kruskal:\n");
+        printf("- ao adiciona a flag '-f' seguido de uma string, define-se o nome do arquivo o qual será utilizado para retirar os dados de entrada.\n");
+        printf("Caso o nome do arquivo esteja errado ou não exista, o programa irá ser encerrado com erro -1.\n");
+        printf("- ao adicionar uma flag '-s' ao comando de execução, o programa retornará os vértices da AGM.\n Caso não, será retornado o custo da árvore.\n");
+        printf("- ao adiciona a flag '-o' seguido de uma string, a saída será escrita em um arquivo com o nome da string. Caso não, será printado no console\n");
+        printf("- caso haja uma flag -i, a mesma será ignorada pois o algoritmo de kruskal não utiliza vértice raiz");
+        printf("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+}
+
 void main(int argc, char *argv[]){
-    int i, root;
-    char *fileName = (char*) malloc(30 * sizeof(char));
-    char *execCommand = (char*) malloc(5 * sizeof(char));
-     for (i = 0; i < argc; i++){
-        if(!strcmp(argv[i], "-f")) fileName = argv[++i];
-        else if(!strcmp(argv[i], "-i")) root = atoi(argv[++i]);
-        else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "-s")) execCommand = argv[i];
-    }
-    file = fopen(fileName, "r");
-     if (file == NULL) {
-        printf("Failed to open the file.\n");
-        return;
-    }
-    fscanf(file, "%d%d", &vertices, &edges);
+    int hFlag = 0, sFlag = 0;
+    char *inputFileName;
+    char *outputFileName = "";
+    char *output;
+    
+    readCommands(&hFlag, &sFlag, NULL, &inputFileName, &outputFileName, argc, argv);
+    inputFile = openFile(inputFileName, "r");
+    readFirstLine(&vertices, &edges, inputFile);
 
     edge **edgesList = readEdges();
     sort(edgesList, 0, edges);
-    // printf("%d %d\n", vertices, edges);
     edge **mst = kruskal(edgesList);
-    int count = 0;
     
-    char *mstRep = (char*) calloc(vertices * 12, sizeof(char));
-    for (i = 0; i < vertices-1; i++){
-        char aux[12];
-        sprintf(aux, "(%d,%d) ", mst[i]->u, mst[i]->v);
-        strcat(mstRep, aux);
-        count += mst[i]->weight;
+    if(hFlag){
+        printHelp();
+    } 
+    if(sFlag) output = getMSTRep(mst, vertices);
+    else output = getMSTCost(mst, vertices);
+    if(strcmp(outputFileName, "")){
+        FILE *outputFile = openFile(outputFileName,"w");
+        fprintf(outputFile,"%s\n",output);
+        fclose(outputFile);
+    
+    }else{
+        printf("%s\n", output);
     }
-
-    if(!strcmp(execCommand, "-s")) printf("%s\n", mstRep);
-    else if(!strcmp(execCommand, "-h")){}
-    else printf("%d\n", count);
 
     freeEdgesList(edgesList);
     free(mst);
-    free(mstRep);
 }
