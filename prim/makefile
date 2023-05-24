@@ -1,7 +1,7 @@
 CC=gcc
 #CFLAGS=-Wall -Werror
 
-SRC=prim.c inputHandler.c heap.c
+SRC=prim.c ../common/inputHandler.c ../common/heap.c
 OBJ=$(SRC:.c=.o)
 TARGET=prim.bin
 
