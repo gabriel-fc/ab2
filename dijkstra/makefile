@@ -1,7 +1,7 @@
 CC=gcc
 #CFLAGS=-Wall -Werror
 
-SRC=dijkstra.c ../prim/inputHandler.c ../prim/heap.c
+SRC=dijkstra.c ../common/inputHandler.c ../common/heap.c
 OBJ=$(SRC:.c=.o)
 TARGET=dijkstra.bin
 

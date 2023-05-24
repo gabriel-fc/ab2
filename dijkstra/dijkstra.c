@@ -3,36 +3,32 @@
 #include <string.h>
 #include <limits.h>
 
-#include "../prim/heap.h"
-#include "../prim/inputHandler.h"
+#include "../common/heap.h"
+#include "../common/inputHandler.h"
 
 
 
 void relax(int u, int v, int weight, qList *q){
     int position = q->elementPosition[v];
     if(weight < q->heap[position]->key){
-        // printf("vertex v == %d with current key == %d receiving %d\n", v, q->heap[position]->key, weight);
         decreaseKey(position, weight, u, q);
     }
 }
 
 
 
-qElement **dijkstra(int vertices, int root, adjList **adjLists){
+int *dijkstra(int vertices, int root, adjList **adjLists){
     qList *q = initHeap(vertices, root);
-    qElement **s = (qElement**) malloc(vertices *sizeof(qElement));
-    int sSize = 0;
+    int *s = (int*) malloc((vertices+1)*sizeof(int));
 
     while(q->size){
         qElement * u = pop(q);
-        s[sSize++] = u;
+        s[u->vertex] = u->key;
         adjVertex * v = adjLists[u->vertex]->head;
-        // printf("u: %d\n", u->vertex);
         while (v){
             int vPosition = q->elementPosition[v->vertex];
             if(vPosition != -1){
                 int weight = v->weight;
-                // printf("%d\n", v->weight);
                 if(u->vertex != root){
                     weight += u->key;
                 }
@@ -42,6 +38,8 @@ qElement **dijkstra(int vertices, int root, adjList **adjLists){
             v = v->next;
         }        
     }
+
+    freeQ(q);
     return s;
 }
 
@@ -73,16 +71,17 @@ void main(int argc, char *argv[]){
     fscanf(file, "%d%d", &vertices, &edges);
     adjList **adjLists = createAdjLists(file, vertices, edges);
     qList *q = initHeap(vertices, root);
-    qElement **s = dijkstra(vertices, root, adjLists);
+    int *s = dijkstra(vertices, root, adjLists);
     
 
     if(!strcmp(execCommand, "-h")){}
     else {
-        for (i = 0; i < vertices; i++){
-            printf("%d:%d ", s[i]->vertex, s[i]->key < INT_MAX ? s[i]->key : -1);
+        for (i = 1; i <= vertices; i++){
+            printf("%d:%d ", i, s[i] < INT_MAX ? s[i] : -1);
         }
     };
 
+    free(s);
     freeLists(adjLists, vertices);
 }
 
