@@ -45,6 +45,29 @@ int *dijkstra(int vertices, int root, adjList **adjLists){
 
 
 
+char printHelp(){
+        printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        printf("menu de ajuda do algoritmo Dijkstra:\n");
+        printf("- ao adiciona a flag '-f' seguido de uma string, define-se o nome do arquivo o qual será utilizado para retirar os dados de entrada.\n");
+        printf("Caso o nome do arquivo esteja errado ou não exista, o programa irá ser encerrado com erro -1.\n");
+        printf("- caso haja uma flag -s, o programa ignorará a mesma.\n");
+        printf("- ao adiciona a flag '-o' seguido de uma string, a saída será escrita em um arquivo com o nome da string. Caso não, será printado no console\n");
+        printf("- ao adiciona a flag '-i' seguido de um número, define-se o vértice raiz da árvore. Caso não, o vertice padrão definido é o v = 1.\n");
+        printf("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+}
+
+
+
+char *getCosts(int *s, int vertices){
+    char *output = (char*) calloc((vertices + 1) * 10, sizeof(char));
+    char aux[10];
+    int i;
+    for (i = 1; i <= vertices; i++){
+    sprintf(aux, "%d:%d ", i, s[i]);
+    strcat(output, aux);    
+    }
+    return output;
+}
 
 
 
@@ -53,40 +76,30 @@ int *dijkstra(int vertices, int root, adjList **adjLists){
 
 void main(int argc, char *argv[]){
 
-    int vertices, edges, i, root = 1;
-    char *fileName = (char*)malloc(100 * sizeof(char));
-    char *execCommand = (char*)malloc(100 * sizeof(char));
-    
-    for (i = 0; i < argc; i++){
-        if(!strcmp(argv[i], "-f")) fileName = argv[++i];
-        else if(!strcmp(argv[i], "-i")) root = atoi(argv[++i]);
-        else if(!strcmp(argv[i], "-h")) execCommand = argv[i];
-    }
-    FILE *file = fopen(fileName, "r");
-     if (file == NULL) {
-        printf("Failed to open the file.\n");
-        return;
-    }
+    int vertices, edges, i, root = 1, hFlag = 0;
+    char *inputFileName;
+    char *outputFileName = "";
 
-    fscanf(file, "%d%d", &vertices, &edges);
-    adjList **adjLists = createAdjLists(file, vertices, edges);
+    readCommands(&hFlag, NULL, &root, &inputFileName, &outputFileName, argc, argv);
+    FILE *inputFile = openFile(inputFileName, "r");
+    readFirstLine(&vertices, &edges, inputFile);
+
+    adjList **adjLists = createAdjLists(inputFile, vertices, edges);
     qList *q = initHeap(vertices, root);
     int *s = dijkstra(vertices, root, adjLists);
+    char *output = getCosts(s, vertices);
+    if(hFlag){
+        printHelp();
+    } 
+    if(strcmp(outputFileName, "")){
+        FILE *outputFile = openFile(outputFileName,"w");
+        fprintf(outputFile,"%s\n",output);
+        fclose(outputFile);
     
-
-    if(!strcmp(execCommand, "-h")){}
-    else {
-        for (i = 1; i <= vertices; i++){
-            printf("%d:%d ", i, s[i] < INT_MAX ? s[i] : -1);
-        }
-    };
+    }else{
+        printf("%s\n", output);
+    }
 
     free(s);
     freeLists(adjLists, vertices);
 }
-
-
-
-
-
-
