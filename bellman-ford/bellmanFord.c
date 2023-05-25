@@ -58,6 +58,7 @@ char printHelp(){
         printf("- caso haja uma flag -s, o programa adicionará uma string após a linha com custos de cada vértice.\n Esta string informará a existência, ou não, de ciclos negativos.\n");
         printf("- ao adiciona a flag '-o' seguido de uma string, a saída será escrita em um arquivo com o nome da string. Caso não, será printado no console\n");
         printf("- ao adiciona a flag '-i' seguido de um número, define-se o vértice raiz da árvore. Caso não, o vertice padrão definido é o v = 1.\n");
+        printf("OBS.: os arquivos de entrada encontram-se na pasta entries. Os arquivos com números ímpares possuem ciclos negativos em seus grafos, os pares não.\n");
         printf("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 }
 

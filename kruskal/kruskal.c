@@ -124,7 +124,7 @@ void printHelp(){
         printf("Caso o nome do arquivo esteja errado ou não exista, o programa irá ser encerrado com erro -1.\n");
         printf("- ao adicionar uma flag '-s' ao comando de execução, o programa retornará os vértices da AGM.\n Caso não, será retornado o custo da árvore.\n");
         printf("- ao adiciona a flag '-o' seguido de uma string, a saída será escrita em um arquivo com o nome da string. Caso não, será printado no console\n");
-        printf("- caso haja uma flag -i, a mesma será ignorada pois o algoritmo de kruskal não utiliza vértice raiz");
+        printf("- caso haja uma flag -i, o programa retornará uma messagem de erro de execução pois o mesmo não suporta este comando");
         printf("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
 }

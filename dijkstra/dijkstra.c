@@ -63,7 +63,7 @@ char *getCosts(int *s, int vertices){
     char aux[10];
     int i;
     for (i = 1; i <= vertices; i++){
-    sprintf(aux, "%d:%d ", i, s[i]);
+    sprintf(aux, "%d:%d ", i, s[i] != INT_MAX ? s[i] : -1);
     strcat(output, aux);    
     }
     return output;
