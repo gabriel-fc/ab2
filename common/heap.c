@@ -55,13 +55,13 @@ qList *initHeap(int vertices, int root){
     q->heap = (qElement**) malloc(vertices * sizeof(qElement));
     int vertex, i = 0;
     //insert root
-    q->heap[i++] = createElement(root, 0, 0);
+    q->heap[i++] = createElement(root, -1, 0);
     q->elementPosition[root] = 0;
 
     //insert V-root vertices
     for(vertex = 1; vertex <= vertices; vertex++){
         if(vertex != root) {
-            q->heap[i] = createElement(vertex, 0, INT_MAX);
+            q->heap[i] = createElement(vertex, -1, INT_MAX);
             q->elementPosition[vertex] = i++;
         }
     }
